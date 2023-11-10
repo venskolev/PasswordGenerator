@@ -1,0 +1,153 @@
+    body {
+      font-family: 'Young Serif', serif;
+      display: flex;
+      /* align-items: center; */
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f4f4f4;
+    }
+
+    header {
+      background-color: #3b3b3b;
+      padding: 15px;
+      text-align: center;
+      font-size: 25px;
+      color: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 210px;
+    }
+
+    footer {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      padding: 10px;
+    }
+
+    footer nav {
+      margin-top: 10px;
+    }
+
+    footer ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    footer li {
+      display: inline;
+      margin: 0 10px;
+    }
+
+    footer a {
+      color: #fff;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+
+    #password-container {
+      text-align: center;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #generate-btn,
+    #copy-btn,
+    #reload-btn {
+      margin-top: 10px;
+      padding: 8px 16px;
+      cursor: pointer;
+      background-color: #4caf50;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+    }
+
+    #reload-btn {
+      display: none;
+      /* Началното състояние е скрито */
+    }
+
+    #password {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    #button-container {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: space-evenly;
+    }
+
+    #bit-select-container {
+      margin-top: 10px;
+    }
+
+    #modal-success {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1;
+    }
+
+    #modal-error {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1;
+    }
+
+    #modal-content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    #close-btn {
+      margin-top: 10px;
+      padding: 8px 16px;
+      cursor: pointer;
+      background-color: #4caf50;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+    }
+
+    #animation-container {
+      display: flex;
+      font-size: 36px;
+      color: #05990b;
+      white-space: nowrap;
+      overflow: hidden;
+      justify-content: center;
+      margin-bottom: 50px;
+    }

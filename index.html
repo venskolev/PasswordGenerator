@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="keywords" content="password, generator, security, web development">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Young+Serif&display=swap" rel="stylesheet">
+  <title>Password Generator</title>
+<link rel="stylesheet" href="style/style.css" />
+</head>
+<body>
+<article>
+<header>
+<h1>Secure password generator</h1>
+</header>
+<div class="container">
+<div id="animation-container"></div>
+<div id="password-container">
+  <div>
+    <div id="password">Click "Generate" to get a password</div>
+	<div id="password-message"></div>
+	<div id="button-container">
+    <button id="generate-btn" onclick="generatePassword()">Generate</button>
+    <button id="copy-btn" onclick="copyToClipboard()">Copy to Clipboard</button>
+    <button id="reload-btn" onclick="reloadPage()">Generate New Code</button>
+	</div>
+  </div>
+  <div id="bit-select-container">
+    <label for="bit-select">Select encoding:</label>
+    <select id="bit-select" onchange="updateBitEncoding()">
+      <option value="32">32 bits</option>
+      <option value="64">64 bits</option>
+      <option value="128">128 bits</option>
+    </select>
+  </div>
+</div>
+</div>
+<footer>
+  <div>
+  <nav>
+    <ul>
+      <li><a href="#">About</a></li>
+      <li><a href="#">Careers</a></li>
+      <li><a href="#">Partners</a></li>
+      <li><a href="#">Contact</a></li>
+      <li><a href="#">Privacy</a></li>
+      <li><a href="#">Terms</a></li>
+    </ul>
+  </nav>
+</div>
+  <div>
+    <p>Copyright 2023 AlfaTrex Ltd. All rights reserved.</p>
+  </div>
+</footer>
+</article>
+<!-- Модален прозорец -->
+<div id="modal-success">
+  <div id="modal-content">
+    <p>Password copied to clipboard!</p>
+    <button id="close-btn" onclick="closeModal()">Close</button>
+  </div>
+</div> 
+<div id="modal-error">   
+  <div id="modal-content">
+    <p>No generated password to copy!</p>
+    <button id="close-btn" onclick="closeModal()">Close</button>
+  </div>
+</div>
+<script src="js/script.js"></script>
+</body>
+</html>
