@@ -1,0 +1,231 @@
+<!-- Файл: /extension/popup.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+  <title>SecurePass</title>
+
+  <style>
+    :root {
+      --primary: #7fe7b0;
+      --secondary: #2fb6a6;
+      --tertiary: #b7f5d6;
+      --deep: #0b1f1a;
+      --deep-2: #0f2b24;
+
+      --white: #ffffff;
+      --text: #e8fff6;
+      --text-soft: rgba(232, 255, 246, 0.85);
+
+      --radius-lg: 16px;
+      --radius-md: 12px;
+
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: 320px;
+      min-height: 200px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+        Ubuntu, Cantarell, sans-serif;
+
+      color: var(--text);
+
+      /* Aurora background similar to site */
+      background:
+        radial-gradient(520px 320px at 10% -10%, rgba(127, 231, 176, 0.60), transparent 60%),
+        radial-gradient(520px 320px at 110% 0%, rgba(47, 182, 166, 0.55), transparent 62%),
+        radial-gradient(520px 360px at 50% 120%, rgba(183, 245, 214, 0.45), transparent 65%),
+        linear-gradient(160deg, var(--deep) 0%, var(--deep-2) 55%, #0a1916 100%);
+
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card {
+      position: relative;
+      width: 100%;
+      border-radius: var(--radius-lg);
+      padding: 16px 16px 14px 16px;
+      background: rgba(12, 30, 25, 0.75);
+      border: 1px solid rgba(183, 245, 214, 0.2);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    /* Light aurora streak overlay */
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(220px 140px at 20% 30%, rgba(127, 231, 176, 0.55), transparent 60%),
+        radial-gradient(240px 160px at 80% 20%, rgba(47, 182, 166, 0.5), transparent 62%),
+        radial-gradient(200px 160px at 50% 80%, rgba(183, 245, 214, 0.45), transparent 65%);
+      filter: blur(35px);
+      opacity: 0.9;
+      transform: translateY(-8%);
+      pointer-events: none;
+    }
+
+    .header {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      z-index: 1;
+    }
+
+    .logo-badge {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      display: grid;
+      place-items: center;
+      color: #0a1916;
+      font-weight: 800;
+      box-shadow: 0 6px 16px rgba(47,182,166,0.55);
+      flex-shrink: 0;
+    }
+
+    .title-wrap h1 {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      line-height: 1.1;
+    }
+
+    .title-wrap p {
+      margin-top: 2px;
+      font-size: 12px;
+      color: var(--text-soft);
+    }
+
+    .divider {
+      height: 1px;
+      background: rgba(183, 245, 214, 0.18);
+      margin: 10px 0 12px 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 8px;
+    }
+
+    .btn {
+      width: 100%;
+      border: none;
+      cursor: pointer;
+      border-radius: var(--radius-md);
+
+      padding: 12px 14px;
+      font-size: 15px;
+      font-weight: 700;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+
+      transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: #071914;
+      box-shadow: 0 8px 18px rgba(47,182,166,0.6);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 22px rgba(47,182,166,0.75);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .note {
+      font-size: 11px;
+      color: var(--text-soft);
+      text-align: center;
+      line-height: 1.35;
+      padding-top: 2px;
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-soft);
+      margin-top: 8px;
+    }
+
+    .row a {
+      color: var(--tertiary);
+      text-decoration: none;
+    }
+
+    .row a:hover {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
+      .card::before { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card" role="main" aria-label="SecurePass extension popup">
+    <div class="header">
+      <div class="logo-badge" aria-hidden="true">SP</div>
+      <div class="title-wrap">
+        <h1>SecurePass</h1>
+        <p>Password Generator</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="cta">
+      <button
+        id="openAppBtn"
+        class="btn btn-primary"
+        type="button"
+        aria-label="Open SecurePass website"
+      >
+        🔐 Open SecurePass
+      </button>
+
+      <div class="note">
+        Quick access to the web app.<br/>
+        Generate strong passwords in seconds.
+      </div>
+    </div>
+
+    <div class="row" aria-hidden="true">
+      <span>secure-pass.app</span>
+      <a href="https://secure-pass.app" target="_blank" rel="noreferrer noopener">Visit</a>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

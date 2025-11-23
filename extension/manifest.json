@@ -1,0 +1,18 @@
+
+{
+  "manifest_version": 3,
+  "name": "SecurePass",
+  "short_name": "SecurePass",
+  "version": "1.0.0",
+  "description": "Quick access to SecurePass — open the password generator instantly.",
+  "action": {
+    "default_title": "SecurePass",
+    "default_popup": "popup.html"
+  },
+  "icons": {
+    "16": "icons/16.png",
+    "32": "icons/32.png",
+    "48": "icons/48.png",
+    "128": "icons/128.png"
+  }
+}

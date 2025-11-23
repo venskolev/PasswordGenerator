@@ -1,75 +1,215 @@
+<!-- Файл: /index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta charset="UTF-8">
+
+  <!-- Responsive -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="keywords" content="password, generator, security, web development">
-  <meta name="description" content="Contribute to Ventsislav Kolev - Simple password generator web page that provides a visually engaging animation while generating passwords. The generated passwords can be copied to the clipboard, and there is a modal window that displays success or error messages.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Young+Serif&display=swap" rel="stylesheet">
-  <title>Password Generator</title>
-<link rel="stylesheet" href="style/style.css" />
+
+  <!-- SEO -->
+  <meta name="description" content="Modern and secure password generator for creating strong passwords instantly.">
+
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#667eea">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+
+  <title>Password Generator | SecurePass</title>
+
+  <link rel="stylesheet" href="/style/style.css">
 </head>
 <body>
-<article>
-<header>
-<h1>Secure password generator</h1>
-</header>
-<div class="container">
-<div id="animation-container"></div>
-<div id="password-container">
-  <div>
-    <div id="password">Click "Generate" to get a password</div>
-	<div id="password-message"></div>
-	<div id="button-container">
-    <button id="generate-btn" onclick="generatePassword()">Generate</button>
-    <button id="copy-btn" onclick="copyToClipboard()">Copy to Clipboard</button>
-    <button id="reload-btn" onclick="reloadPage()">Generate New Code</button>
-	</div>
+  <!-- Animated background -->
+  <div class="bg-animation" aria-hidden="true">
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
   </div>
-  <div id="bit-select-container">
-    <label for="bit-select">Select encoding:</label>
-    <select id="bit-select" onchange="updateBitEncoding()">
-      <option value="32">32 bits</option>
-      <option value="64">64 bits</option>
-      <option value="128">128 bits</option>
-    </select>
+
+  <div class="container">
+    <!-- Header with Install button -->
+    <header class="app-header" role="banner">
+      <h2 class="app-logo" aria-label="SecurePass">SecurePass</h2>
+
+      <!-- Винаги видим бутон; активира се когато PWA е installable -->
+      <button
+        id="installBtn"
+        class="btn btn-secondary"
+        type="button"
+        aria-label="Install SecurePass app"
+        disabled
+      >
+        ➕ Install App
+      </button>
+    </header>
+
+    <div class="card">
+      <div class="header">
+        <h1>🔐 Password Generator</h1>
+        <p>Create a strong and secure password for your accounts</p>
+      </div>
+
+      <div id="animation-container" aria-live="polite"></div>
+
+      <div
+        class="password-display"
+        id="passwordDisplay"
+        tabindex="0"
+        role="button"
+        aria-label="Generated password. Click to copy."
+      >
+        <div class="password-text password-placeholder" id="passwordText">
+          Click “Generate” to create a password
+        </div>
+      </div>
+
+      <div class="strength-indicator" id="strengthIndicator" aria-live="polite">
+        <div class="strength-bar">
+          <div class="strength-fill" id="strengthFill"></div>
+        </div>
+        <div class="strength-text" id="strengthText"></div>
+      </div>
+
+      <div class="options" id="options">
+        <div class="option-group">
+          <label class="option-label">
+            Password length: <span class="slider-value" id="lengthValue">16</span>
+          </label>
+          <input
+            type="range"
+            min="8"
+            max="32"
+            value="16"
+            class="slider"
+            id="lengthSlider"
+            aria-label="Password length"
+          >
+        </div>
+
+        <div class="option-group">
+          <label class="option-label">Include:</label>
+          <div class="checkboxes">
+            <div class="checkbox-item">
+              <input type="checkbox" id="uppercase" checked>
+              <label for="uppercase">Uppercase letters (A–Z)</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="lowercase" checked>
+              <label for="lowercase">Lowercase letters (a–z)</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="numbers" checked>
+              <label for="numbers">Numbers (0–9)</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="symbols" checked>
+              <label for="symbols">Symbols (!@#$%)</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="buttons">
+        <button class="btn btn-primary" id="generateBtn" type="button">
+          <span>✨</span> Generate
+        </button>
+        <button class="btn btn-secondary" id="copyBtn" type="button" style="display: none;">
+          <span>📋</span> Copy
+        </button>
+        <button class="btn btn-secondary" id="reloadBtn" type="button" style="display: none;">
+          <span>🔄</span> New Password
+        </button>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer" role="contentinfo">
+      <p class="footer-text">
+        © <span id="currentYear">2025</span> Secure-Pass by WebDigiTech — All rights reserved.<br>
+        Contact: <a href="mailto:info@secure-pass.app">info@secure-pass.app</a> •
+        <a href="mailto:support@webdigitech.de">support@webdigitech.de</a>
+      </p>
+    </footer>
   </div>
-</div>
-</div>
-<footer>
-  <div>
-  <nav>
-    <ul>
-      <li><a href="#">About</a></li>
-      <li><a href="#">Careers</a></li>
-      <li><a href="#">Partners</a></li>
-      <li><a href="#">Contact</a></li>
-      <li><a href="#">Privacy</a></li>
-      <li><a href="#">Terms</a></li>
-    </ul>
-  </nav>
-</div>
-  <div>
-    <p>Copyright 2023 AlfaTrex Ltd. All rights reserved.</p>
+
+  <div class="notification" id="notification" role="status" aria-live="polite">
+    <span class="notification-icon" id="notificationIcon" aria-hidden="true"></span>
+    <span class="notification-text" id="notificationText"></span>
   </div>
-</footer>
-</article>
-<!-- Модален прозорец -->
-<div id="modal-success">
-  <div id="modal-content">
-    <p>Password copied to clipboard!</p>
-    <button id="close-btn" onclick="closeModal()">Close</button>
-  </div>
-</div> 
-<div id="modal-error">   
-  <div id="modal-content">
-    <p>No generated password to copy!</p>
-    <button id="close-btn" onclick="closeModal()">Close</button>
-  </div>
-</div>
-<script src="js/script.js"></script>
+
+  <script src="/js/script.js"></script>
+
+  <script>
+    // Update footer year automatically
+    (function () {
+      var yearEl = document.getElementById("currentYear");
+      if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+    })();
+
+    // Register Service Worker for PWA installability
+    (function () {
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/sw.js").catch(function (err) {
+          console.warn("[SecurePass] Service Worker registration failed:", err);
+        });
+      }
+    })();
+
+    // Install App button logic (always visible; enabled when installable)
+    (function () {
+      var installBtn = document.getElementById("installBtn");
+      var deferredPrompt = null;
+
+      function isStandalone() {
+        return window.matchMedia("(display-mode: standalone)").matches ||
+               window.navigator.standalone === true;
+      }
+
+      function setInstalledState() {
+        if (!installBtn) return;
+        installBtn.disabled = true;
+        installBtn.textContent = "✓ Installed";
+        installBtn.setAttribute("aria-label", "SecurePass is installed");
+      }
+
+      if (isStandalone()) {
+        setInstalledState();
+        return;
+      }
+
+      window.addEventListener("beforeinstallprompt", function (e) {
+        e.preventDefault();
+        deferredPrompt = e;
+
+        if (!installBtn) return;
+        installBtn.disabled = false;
+        installBtn.textContent = "➕ Install App";
+      });
+
+      if (installBtn) {
+        installBtn.addEventListener("click", async function () {
+          if (!deferredPrompt) return;
+
+          deferredPrompt.prompt();
+          try {
+            var choice = await deferredPrompt.userChoice;
+            if (choice && choice.outcome === "accepted") {
+              setInstalledState();
+            }
+          } catch (err) {
+            console.warn("[SecurePass] Install prompt error:", err);
+          } finally {
+            deferredPrompt = null;
+          }
+        });
+      }
+
+      window.addEventListener("appinstalled", function () {
+        setInstalledState();
+        deferredPrompt = null;
+      });
+    })();
+  </script>
 </body>
 </html>
