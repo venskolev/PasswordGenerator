@@ -1,49 +1,98 @@
-// /sw.js
-// SecurePass PWA Service Worker
-// Minimal installability & offline fallback support
+// Файл: /sw.js
+// SecurePass PWA Service Worker (safe cache install)
+// - Не чупи инсталацията ако някой asset липсва
+// - Cache-first за статични GET заявки от същия origin
 
-const CACHE_NAME = "securepass-cache-v1";
+const CACHE_VERSION = "v1.0.0";
+const CACHE_NAME = `securepass-cache-${CACHE_VERSION}`;
 
-// Файлове, които кешираме за offline shell
-const ASSETS_TO_CACHE = [
-  "/",
+// Слагай тук само реални, съществуващи файлове в ROOT сайта
+// Ако нещо го няма още (напр. икони), по-добре го махни временно.
+const ASSET_URLS = [
+  "/",                 // start page
   "/index.html",
   "/style/style.css",
   "/js/script.js",
   "/manifest.json",
-  "/icons/icon-192.png",
-  "/icons/icon-512.png",
-  "/icons/icon-maskable-192.png",
-  "/icons/icon-maskable-512.png"
+  // "/icons/icon-192.png",
+  // "/icons/icon-512.png",
 ];
 
-// Install event — кеширане на shell ресурси
 self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
-    })
-  );
-});
+  event.waitUntil((async () => {
+    self.skipWaiting();
 
-// Activate event — премахване на стари кешове
-self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    caches.keys().then((keyList) =>
-      Promise.all(
-        keyList.map((key) => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key);
+    const cache = await caches.open(CACHE_NAME);
+
+    // Кеширай внимателно, без addAll
+    await Promise.allSettled(
+      ASSET_URLS.map(async (url) => {
+        try {
+          const req = new Request(url, { cache: "reload" });
+          const res = await fetch(req);
+
+          // Кешираме само успешни same-origin отговори
+          if (res && res.ok) {
+            await cache.put(req, res.clone());
+          } else {
+            // Ако е 404/redirect — пропускаме
+            console.warn("[SW] Skip caching (not ok):", url, res.status);
           }
-        })
-      )
-    )
-  );
+        } catch (err) {
+          // Ако fetch падне — пропускаме, но не чупим SW
+          console.warn("[SW] Skip caching (fetch failed):", url, err);
+        }
+      })
+    );
+  })());
 });
 
-// Fetch event — network-first fallback to offline cache
+self.addEventListener("activate", (event) => {
+  event.waitUntil((async () => {
+    // Чистим стари кешове
+    const keys = await caches.keys();
+    await Promise.all(
+      keys.map((key) => {
+        if (key.startsWith("securepass-cache-") && key !== CACHE_NAME) {
+          return caches.delete(key);
+        }
+      })
+    );
+
+    await clients.claim();
+  })());
+});
+
 self.addEventListener("fetch", (event) => {
-  event.respondWith(
-    fetch(event.request).catch(() => caches.match(event.request))
-  );
+  const { request } = event;
+
+  // Кешираме само GET
+  if (request.method !== "GET") return;
+
+  const url = new URL(request.url);
+
+  // Само same-origin
+  if (url.origin !== self.location.origin) return;
+
+  event.respondWith((async () => {
+    const cache = await caches.open(CACHE_NAME);
+
+    // 1) пробваме кеш
+    const cached = await cache.match(request);
+    if (cached) return cached;
+
+    // 2) иначе мрежа + запис
+    try {
+      const fresh = await fetch(request);
+      if (fresh && fresh.ok) {
+        cache.put(request, fresh.clone());
+      }
+      return fresh;
+    } catch (err) {
+      // 3) ако мрежата падне и нямаме кеш — fallback към /
+      const fallback = await cache.match("/");
+      if (fallback) return fallback;
+      throw err;
+    }
+  })());
 });

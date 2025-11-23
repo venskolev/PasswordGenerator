@@ -141,75 +141,78 @@
   <script src="/js/script.js"></script>
 
   <script>
-    // Update footer year automatically
-    (function () {
-      var yearEl = document.getElementById("currentYear");
-      if (yearEl) yearEl.textContent = String(new Date().getFullYear());
-    })();
+  // Update footer year automatically
+  (function () {
+    var yearEl = document.getElementById("currentYear");
+    if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+  })();
 
-    // Register Service Worker for PWA installability
-    (function () {
-      if ("serviceWorker" in navigator) {
+  // Register Service Worker for PWA installability
+  (function () {
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function () {
         navigator.serviceWorker.register("/sw.js").catch(function (err) {
           console.warn("[SecurePass] Service Worker registration failed:", err);
         });
-      }
-    })();
-
-    // Install App button logic (always visible; enabled when installable)
-    (function () {
-      var installBtn = document.getElementById("installBtn");
-      var deferredPrompt = null;
-
-      function isStandalone() {
-        return window.matchMedia("(display-mode: standalone)").matches ||
-               window.navigator.standalone === true;
-      }
-
-      function setInstalledState() {
-        if (!installBtn) return;
-        installBtn.disabled = true;
-        installBtn.textContent = "✓ Installed";
-        installBtn.setAttribute("aria-label", "SecurePass is installed");
-      }
-
-      if (isStandalone()) {
-        setInstalledState();
-        return;
-      }
-
-      window.addEventListener("beforeinstallprompt", function (e) {
-        e.preventDefault();
-        deferredPrompt = e;
-
-        if (!installBtn) return;
-        installBtn.disabled = false;
-        installBtn.textContent = "➕ Install App";
       });
+    }
+  })();
 
-      if (installBtn) {
-        installBtn.addEventListener("click", async function () {
-          if (!deferredPrompt) return;
+  // Install App button logic (always visible; enabled when installable)
+  (function () {
+    var installBtn = document.getElementById("installBtn");
+    var deferredPrompt = null;
 
-          deferredPrompt.prompt();
-          try {
-            var choice = await deferredPrompt.userChoice;
-            if (choice && choice.outcome === "accepted") {
-              setInstalledState();
-            }
-          } catch (err) {
-            console.warn("[SecurePass] Install prompt error:", err);
-          } finally {
-            deferredPrompt = null;
+    function isStandalone() {
+      return window.matchMedia("(display-mode: standalone)").matches ||
+             window.navigator.standalone === true;
+    }
+
+    function setInstalledState() {
+      if (!installBtn) return;
+      installBtn.disabled = true;
+      installBtn.textContent = "✓ Installed";
+      installBtn.setAttribute("aria-label", "SecurePass is installed");
+    }
+
+    if (isStandalone()) {
+      setInstalledState();
+      return;
+    }
+
+    window.addEventListener("beforeinstallprompt", function (e) {
+      e.preventDefault();
+      deferredPrompt = e;
+
+      if (!installBtn) return;
+      installBtn.disabled = false;
+      installBtn.textContent = "➕ Install App";
+    });
+
+    if (installBtn) {
+      installBtn.addEventListener("click", async function () {
+        if (!deferredPrompt) return;
+
+        deferredPrompt.prompt();
+        try {
+          var choice = await deferredPrompt.userChoice;
+          if (choice && choice.outcome === "accepted") {
+            setInstalledState();
           }
-        });
-      }
-
-      window.addEventListener("appinstalled", function () {
-        setInstalledState();
-        deferredPrompt = null;
+        } catch (err) {
+          console.warn("[SecurePass] Install prompt error:", err);
+        } finally {
+          deferredPrompt = null;
+        }
       });
-    })();
-  </script>
+    }
+
+    window.addEventListener("appinstalled", function () {
+      setInstalledState();
+      deferredPrompt = null;
+    });
+  })();
+</script>
+
 </body>
 </html>
