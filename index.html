@@ -1,6 +1,7 @@
 <!-- Файл: /index.html -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
 
@@ -12,13 +13,17 @@
 
   <!-- PWA -->
   <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#667eea">
-  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <meta name="theme-color" content="#2fb6a6">
+  <link rel="icon" type="image/png" href="/icons/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg" />
+  <link rel="shortcut icon" href="/icons/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
 
   <title>Password Generator | SecurePass</title>
 
   <link rel="stylesheet" href="/style/style.css">
 </head>
+
 <body>
   <!-- Animated background -->
   <div class="bg-animation" aria-hidden="true">
@@ -33,13 +38,7 @@
       <h2 class="app-logo" aria-label="SecurePass">SecurePass</h2>
 
       <!-- Винаги видим бутон; активира се когато PWA е installable -->
-      <button
-        id="installBtn"
-        class="btn btn-secondary"
-        type="button"
-        aria-label="Install SecurePass app"
-        disabled
-      >
+      <button id="installBtn" class="btn btn-secondary" type="button" aria-label="Install SecurePass app" disabled>
         ➕ Install App
       </button>
     </header>
@@ -52,13 +51,8 @@
 
       <div id="animation-container" aria-live="polite"></div>
 
-      <div
-        class="password-display"
-        id="passwordDisplay"
-        tabindex="0"
-        role="button"
-        aria-label="Generated password. Click to copy."
-      >
+      <div class="password-display" id="passwordDisplay" tabindex="0" role="button"
+        aria-label="Generated password. Click to copy.">
         <div class="password-text password-placeholder" id="passwordText">
           Click “Generate” to create a password
         </div>
@@ -76,15 +70,7 @@
           <label class="option-label">
             Password length: <span class="slider-value" id="lengthValue">16</span>
           </label>
-          <input
-            type="range"
-            min="8"
-            max="32"
-            value="16"
-            class="slider"
-            id="lengthSlider"
-            aria-label="Password length"
-          >
+          <input type="range" min="8" max="32" value="16" class="slider" id="lengthSlider" aria-label="Password length">
         </div>
 
         <div class="option-group">
@@ -141,78 +127,79 @@
   <script src="/js/script.js"></script>
 
   <script>
-  // Update footer year automatically
-  (function () {
-    var yearEl = document.getElementById("currentYear");
-    if (yearEl) yearEl.textContent = String(new Date().getFullYear());
-  })();
+    // Update footer year automatically
+    (function () {
+      var yearEl = document.getElementById("currentYear");
+      if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+    })();
 
-  // Register Service Worker for PWA installability
-  (function () {
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", function () {
-        navigator.serviceWorker.register("/sw.js").catch(function (err) {
-          console.warn("[SecurePass] Service Worker registration failed:", err);
+    // Register Service Worker for PWA installability
+    (function () {
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", function () {
+          navigator.serviceWorker.register("/sw.js").catch(function (err) {
+            console.warn("[SecurePass] Service Worker registration failed:", err);
+          });
         });
+      }
+    })();
+
+    // Install App button logic (always visible; enabled when installable)
+    (function () {
+      var installBtn = document.getElementById("installBtn");
+      var deferredPrompt = null;
+
+      function isStandalone() {
+        return window.matchMedia("(display-mode: standalone)").matches ||
+          window.navigator.standalone === true;
+      }
+
+      function setInstalledState() {
+        if (!installBtn) return;
+        installBtn.disabled = true;
+        installBtn.textContent = "✓ Installed";
+        installBtn.setAttribute("aria-label", "SecurePass is installed");
+      }
+
+      if (isStandalone()) {
+        setInstalledState();
+        return;
+      }
+
+      window.addEventListener("beforeinstallprompt", function (e) {
+        e.preventDefault();
+        deferredPrompt = e;
+
+        if (!installBtn) return;
+        installBtn.disabled = false;
+        installBtn.textContent = "➕ Install App";
       });
-    }
-  })();
 
-  // Install App button logic (always visible; enabled when installable)
-  (function () {
-    var installBtn = document.getElementById("installBtn");
-    var deferredPrompt = null;
+      if (installBtn) {
+        installBtn.addEventListener("click", async function () {
+          if (!deferredPrompt) return;
 
-    function isStandalone() {
-      return window.matchMedia("(display-mode: standalone)").matches ||
-             window.navigator.standalone === true;
-    }
-
-    function setInstalledState() {
-      if (!installBtn) return;
-      installBtn.disabled = true;
-      installBtn.textContent = "✓ Installed";
-      installBtn.setAttribute("aria-label", "SecurePass is installed");
-    }
-
-    if (isStandalone()) {
-      setInstalledState();
-      return;
-    }
-
-    window.addEventListener("beforeinstallprompt", function (e) {
-      e.preventDefault();
-      deferredPrompt = e;
-
-      if (!installBtn) return;
-      installBtn.disabled = false;
-      installBtn.textContent = "➕ Install App";
-    });
-
-    if (installBtn) {
-      installBtn.addEventListener("click", async function () {
-        if (!deferredPrompt) return;
-
-        deferredPrompt.prompt();
-        try {
-          var choice = await deferredPrompt.userChoice;
-          if (choice && choice.outcome === "accepted") {
-            setInstalledState();
+          deferredPrompt.prompt();
+          try {
+            var choice = await deferredPrompt.userChoice;
+            if (choice && choice.outcome === "accepted") {
+              setInstalledState();
+            }
+          } catch (err) {
+            console.warn("[SecurePass] Install prompt error:", err);
+          } finally {
+            deferredPrompt = null;
           }
-        } catch (err) {
-          console.warn("[SecurePass] Install prompt error:", err);
-        } finally {
-          deferredPrompt = null;
-        }
-      });
-    }
+        });
+      }
 
-    window.addEventListener("appinstalled", function () {
-      setInstalledState();
-      deferredPrompt = null;
-    });
-  })();
-</script>
+      window.addEventListener("appinstalled", function () {
+        setInstalledState();
+        deferredPrompt = null;
+      });
+    })();
+  </script>
 
 </body>
+
 </html>
