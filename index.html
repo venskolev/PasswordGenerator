@@ -22,23 +22,9 @@
   <title>Password Generator | SecurePass</title>
 
   <link rel="stylesheet" href="/style/style.css">
-
 </head>
 
 <body>
-  <!-- Mobile install banner (shown only when not installed) -->
-  <div class="install-banner" id="installBanner" role="region" aria-label="Install SecurePass">
-    <div class="install-banner__text" id="installBannerText">
-      Install SecurePass for quick access.
-    </div>
-    <button class="install-banner__btn" id="installBannerBtn" type="button" aria-label="Install SecurePass">
-      Install
-    </button>
-    <button class="install-banner__close" id="installBannerClose" type="button" aria-label="Close install banner">
-      ✕
-    </button>
-  </div>
-
   <!-- Animated background -->
   <div class="bg-animation" aria-hidden="true">
     <div class="bg-circle"></div>
@@ -51,7 +37,7 @@
     <header class="app-header" role="banner">
       <h2 class="app-logo" aria-label="SecurePass">SecurePass</h2>
 
-      <!-- Desktop install button (hidden on mobile) -->
+      <!-- Винаги видим бутон; активира се когато PWA е installable -->
       <button id="installBtn" class="btn btn-secondary" type="button" aria-label="Install SecurePass app" disabled>
         ➕ Install App
       </button>
@@ -158,16 +144,9 @@
       }
     })();
 
-    // Install UX:
-    // - Desktop: show header button when installable
-    // - Mobile: hide header button, show top banner if not installed
+    // Install App button logic (always visible; enabled when installable)
     (function () {
       var installBtn = document.getElementById("installBtn");
-      var banner = document.getElementById("installBanner");
-      var bannerBtn = document.getElementById("installBannerBtn");
-      var bannerText = document.getElementById("installBannerText");
-      var bannerClose = document.getElementById("installBannerClose");
-
       var deferredPrompt = null;
 
       function isStandalone() {
@@ -175,96 +154,27 @@
           window.navigator.standalone === true;
       }
 
-      function isMobileDevice() {
-        return window.matchMedia("(pointer: coarse)").matches ||
-          window.matchMedia("(max-width: 768px)").matches;
-      }
-
-      function isIOS() {
-        return /iphone|ipad|ipod/i.test(window.navigator.userAgent);
-      }
-
-      function hide(el) {
-        if (!el) return;
-        el.style.display = "none";
-      }
-
-      function show(el) {
-        if (!el) return;
-        el.style.display = "flex";
-      }
-
-      function setInstalledStateDesktop() {
+      function setInstalledState() {
         if (!installBtn) return;
         installBtn.disabled = true;
         installBtn.textContent = "✓ Installed";
         installBtn.setAttribute("aria-label", "SecurePass is installed");
       }
 
-      function setDesktopInstallable() {
-        if (!installBtn) return;
-        installBtn.disabled = false;
-        installBtn.textContent = "➕ Install App";
-        installBtn.setAttribute("aria-label", "Install SecurePass app");
-      }
-
-      function showMobileBannerInstallable() {
-        if (!banner || !bannerBtn || !bannerText) return;
-        bannerText.textContent = "Install SecurePass for quick access.";
-        bannerBtn.textContent = "Install";
-        bannerBtn.disabled = false;
-        show(banner);
-      }
-
-      function showMobileBannerIOSHint() {
-        if (!banner || !bannerBtn || !bannerText) return;
-        bannerText.textContent = "To install: tap Share and choose “Add to Home Screen”.";
-        bannerBtn.textContent = "OK";
-        bannerBtn.disabled = true;
-        show(banner);
-      }
-
-      function closeBanner() {
-        hide(banner);
-      }
-
-      // Close banner
-      if (bannerClose) {
-        bannerClose.addEventListener("click", closeBanner);
-      }
-
-      // If already installed -> hide everything install-related
       if (isStandalone()) {
-        setInstalledStateDesktop();
-        hide(banner);
+        setInstalledState();
         return;
       }
 
-      var isMobile = isMobileDevice();
-
-      // Mobile: hide desktop button always
-      if (isMobile) {
-        hide(installBtn);
-
-        // iOS has no beforeinstallprompt; show hint banner
-        if (isIOS()) {
-          showMobileBannerIOSHint();
-        }
-      }
-
-      // beforeinstallprompt fires on supported browsers (mostly Chromium)
       window.addEventListener("beforeinstallprompt", function (e) {
         e.preventDefault();
         deferredPrompt = e;
 
-        if (isMobile) {
-          showMobileBannerInstallable();
-        } else {
-          setDesktopInstallable();
-        }
+        if (!installBtn) return;
+        installBtn.disabled = false;
+        installBtn.textContent = "➕ Install App";
       });
 
-      // Desktop button click
       if (installBtn) {
         installBtn.addEventListener("click", async function () {
           if (!deferredPrompt) return;
@@ -273,26 +183,7 @@
           try {
             var choice = await deferredPrompt.userChoice;
             if (choice && choice.outcome === "accepted") {
-              setInstalledStateDesktop();
-            }
-          } catch (err) {
-            console.warn("[SecurePass] Install prompt error:", err);
-          } finally {
-            deferredPrompt = null;
-          }
-        });
-      }
-
-      // Mobile banner click
-      if (bannerBtn) {
-        bannerBtn.addEventListener("click", async function () {
-          if (!deferredPrompt) return;
-
-          deferredPrompt.prompt();
-          try {
-            var choice = await deferredPrompt.userChoice;
-            if (choice && choice.outcome === "accepted") {
-              closeBanner();
+              setInstalledState();
             }
           } catch (err) {
             console.warn("[SecurePass] Install prompt error:", err);
@@ -303,8 +194,7 @@
       }
 
       window.addEventListener("appinstalled", function () {
-        setInstalledStateDesktop();
-        closeBanner();
+        setInstalledState();
         deferredPrompt = null;
       });
     })();
