@@ -9,7 +9,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- SEO -->
-  <meta name="description" content="Modern and secure password generator for creating strong passwords instantly.">
+  <meta name="description"
+    content="Modern and secure password generator for creating strong passwords instantly. Free, secure, and easy to use.">
+  <meta name="keywords" content="password generator, strong password, secure password, random password, security tool">
+  <meta name="author" content="WebDigiTech">
+  <meta name="robots" content="index, follow">
 
   <!-- PWA -->
   <link rel="manifest" href="/manifest.json">
@@ -33,14 +37,9 @@
   </div>
 
   <div class="container">
-    <!-- Header with Install button -->
+    <!-- Header -->
     <header class="app-header" role="banner">
-      <h2 class="app-logo" aria-label="SecurePass">SecurePass</h2>
-
-      <!-- Винаги видим бутон; активира се когато PWA е installable -->
-      <button id="installBtn" class="btn btn-secondary" type="button" aria-label="Install SecurePass app" disabled>
-        ➕ Install App
-      </button>
+      <h2 class="app-logo" aria-label="SecurePass">Secure-Pass</h2>
     </header>
 
     <div class="card">
@@ -113,8 +112,8 @@
     <footer class="footer" role="contentinfo">
       <p class="footer-text">
         © <span id="currentYear">2025</span> Secure-Pass by WebDigiTech — All rights reserved.<br>
-        Contact: <a href="mailto:info@secure-pass.app">info@secure-pass.app</a> •
-        <a href="mailto:support@webdigitech.de">support@webdigitech.de</a>
+        <a href="/privacy.html">Privacy Policy</a> •
+        Contact: <a href="mailto:info@secure-pass.app">info@secure-pass.app</a>
       </p>
     </footer>
   </div>
@@ -124,7 +123,32 @@
     <span class="notification-text" id="notificationText"></span>
   </div>
 
+  <div id="cookieConsent" class="cookie-banner" style="display: none;">
+    <div class="cookie-content">
+      <p>We use cookies to analyze traffic and improve your experience. By continuing, you agree to our <a
+          href="/privacy.html">Privacy Policy</a>.</p>
+      <div class="cookie-buttons">
+        <button id="acceptCookies" class="btn btn-primary btn-sm">Accept</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Google Analytics (gtag.js) - Loaded conditionally -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    // Default to denied until consent
+    gtag('consent', 'default', {
+      'ad_storage': 'denied',
+      'analytics_storage': 'denied'
+    });
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
+
   <script src="/js/script.js"></script>
+  <script src="/js/cookie-consent.js"></script>
 
   <script>
     // Update footer year automatically
@@ -142,61 +166,6 @@
           });
         });
       }
-    })();
-
-    // Install App button logic (always visible; enabled when installable)
-    (function () {
-      var installBtn = document.getElementById("installBtn");
-      var deferredPrompt = null;
-
-      function isStandalone() {
-        return window.matchMedia("(display-mode: standalone)").matches ||
-          window.navigator.standalone === true;
-      }
-
-      function setInstalledState() {
-        if (!installBtn) return;
-        installBtn.disabled = true;
-        installBtn.textContent = "✓ Installed";
-        installBtn.setAttribute("aria-label", "SecurePass is installed");
-      }
-
-      if (isStandalone()) {
-        setInstalledState();
-        return;
-      }
-
-      window.addEventListener("beforeinstallprompt", function (e) {
-        e.preventDefault();
-        deferredPrompt = e;
-
-        if (!installBtn) return;
-        installBtn.disabled = false;
-        installBtn.textContent = "➕ Install App";
-      });
-
-      if (installBtn) {
-        installBtn.addEventListener("click", async function () {
-          if (!deferredPrompt) return;
-
-          deferredPrompt.prompt();
-          try {
-            var choice = await deferredPrompt.userChoice;
-            if (choice && choice.outcome === "accepted") {
-              setInstalledState();
-            }
-          } catch (err) {
-            console.warn("[SecurePass] Install prompt error:", err);
-          } finally {
-            deferredPrompt = null;
-          }
-        });
-      }
-
-      window.addEventListener("appinstalled", function () {
-        setInstalledState();
-        deferredPrompt = null;
-      });
     })();
   </script>
 
