@@ -1,4 +1,26 @@
-/* /style/style.css */
+/*!
+ * MIT License
+ *
+ * Copyright (c) 2023-2026 WebDigiTech - Ventsislav Kolev
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 /* ------------------------------
    Base reset + variables (Aurora Green Theme)
@@ -575,7 +597,7 @@ body::after {
   align-items: center;
   gap: 12px;
 
-  z-index: 1000;
+  z-index: 10000; /* Ensure it stays above modals */
   transform: translateX(400px);
   transition: transform var(--transition);
 }
@@ -590,6 +612,10 @@ body::after {
 
 .notification.error {
   border-left: 4px solid #f56565;
+}
+
+.notification.info {
+  border-left: 4px solid #4299e1;
 }
 
 .notification-icon {
@@ -619,45 +645,6 @@ body::after {
 }
 
 /* ------------------------------
-   Responsive
-   ------------------------------ */
-@media (max-width: 600px) {
-  .container {
-    gap: 10px;
-  }
-
-  .app-header {
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .app-logo {
-    font-size: 18px;
-  }
-
-  .card {
-    padding: 24px;
-  }
-
-  .header h1 {
-    font-size: 24px;
-  }
-
-  .password-text {
-    font-size: 18px;
-  }
-
-  #animation-container {
-    font-size: 32px;
-  }
-
-  .buttons {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ------------------------------
    Accessibility / reduced motion
    ------------------------------ */
 @media (prefers-reduced-motion: reduce) {
@@ -671,47 +658,6 @@ body::after {
     animation: none !important;
   }
 }
-
-/* Минимални стилове за мобилен инсталационен банер */
-.install-banner {
-      position: sticky;
-      top: 0;
-      z-index: 9999;
-      display: none;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 12px;
-      font-size: 0.9rem;
-      line-height: 1.2;
-      background: rgba(0, 0, 0, 0.75);
-      color: #fff;
-      backdrop-filter: blur(6px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .install-banner__text {
-      flex: 1;
-    }
-
-    .install-banner__btn {
-      border: 0;
-      padding: 6px 10px;
-      border-radius: 10px;
-      font-weight: 600;
-      cursor: pointer;
-      background: #2fb6a6;
-      color: #001a17;
-      white-space: nowrap;
-    }
-
-    .install-banner__close {
-      border: 0;
-      padding: 6px 8px;
-      border-radius: 8px;
-      cursor: pointer;
-      background: rgba(255, 255, 255, 0.12);
-      color: #fff;
-    }
 
 /* ------------------------------
    Cookie Consent Banner
@@ -729,7 +675,7 @@ body::after {
   padding: 20px;
   border-radius: var(--radius-md);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  z-index: 10000;
+  z-index: 9000;
   border: 1px solid rgba(47, 182, 166, 0.2);
   animation: slideUp 0.5s ease-out;
 }
@@ -768,6 +714,108 @@ body::after {
   font-size: 14px;
 }
 
+/* =========================================
+   NEW: Modals & Vault Elements
+   ========================================= */
+
+/* Modals animations */
+.modal-overlay {
+  animation: fadeInModal 0.3s ease;
+}
+
+.modal-card {
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes fadeInModal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Custom Scrollbar for Modals & Vault items */
+.modal-card::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-card::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.modal-card::-webkit-scrollbar-thumb {
+  background: var(--secondary);
+  border-radius: 4px;
+}
+
+.modal-card::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* Max Security Button Hover Effect */
+#maxSecurityBtn {
+  transition: all 0.3s ease;
+}
+
+#maxSecurityBtn:hover {
+  background: rgba(30, 41, 59, 0.8) !important;
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+  transform: translateY(-2px);
+  color: #d8b4fe !important;
+  border-color: rgba(168, 85, 247, 0.6) !important;
+}
+
+/* Vault Top Buttons Hover */
+#vaultControls .btn-sm:hover {
+  transform: translateY(-2px);
+}
+
+/* Vault Inner List Action Buttons */
+.delete-vault-btn {
+  transition: all 0.2s ease;
+  border-radius: 6px;
+}
+
+.delete-vault-btn:hover {
+  background: rgba(248, 113, 113, 0.1) !important;
+  transform: scale(1.1);
+}
+
+.copy-vault-btn {
+  transition: all 0.2s ease;
+}
+
+.copy-vault-btn:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: var(--primary) !important;
+  transform: scale(1.05);
+}
+
+/* Modal Input Focus */
+.modal-card input:focus {
+  border-color: var(--secondary) !important;
+  box-shadow: 0 0 0 2px rgba(47, 182, 166, 0.3);
+  outline: none;
+}
+
+#closeModalBtn:hover {
+  color: white !important;
+  transform: scale(1.1);
+}
+
+/* ------------------------------
+   Responsive for Modals & Cookies
+   ------------------------------ */
 @media (max-width: 600px) {
   .cookie-content {
     flex-direction: column;
@@ -778,5 +826,10 @@ body::after {
   .cookie-banner {
     bottom: 10px;
     width: 95%;
+  }
+
+  .modal-card {
+    padding: 24px !important;
+    width: 95% !important;
   }
 }
