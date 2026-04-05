@@ -23,13 +23,13 @@
  */
 
 :root {
-  --bg-base: #0f172a;
-  --bg-elevated: #111827;
-  --bg-elevated-2: #0b1120;
+  --bg-base: #162a0f;
+  --bg-elevated: #162711;
+  --bg-elevated-2: #0b2015;
   --bg-surface: rgba(255, 255, 255, 0.08);
   --bg-surface-strong: rgba(255, 255, 255, 0.12);
   --bg-surface-soft: rgba(255, 255, 255, 0.04);
-  --bg-surface-dark: rgba(15, 23, 42, 0.72);
+  --bg-surface-dark: rgba(16, 42, 15, 0.72);
 
   --border-soft: rgba(255, 255, 255, 0.08);
   --border-medium: rgba(255, 255, 255, 0.14);
